@@ -3,6 +3,9 @@ package com.wordpress.nikant20.milkdiary.View;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.wordpress.nikant20.milkdiary.Model.BaseActivity;
 import com.wordpress.nikant20.milkdiary.Model.Utils;
 import com.wordpress.nikant20.milkdiary.R;
 
@@ -28,6 +31,9 @@ public class SignUp_Fragment extends Fragment implements OnClickListener {
 	private static Button signUpButton;
 	private static CheckBox terms_conditions;
 
+	FirebaseAuth firebaseAuth;
+	BaseActivity baseActivity;
+
 	public SignUp_Fragment() {
 
 	}
@@ -36,9 +42,44 @@ public class SignUp_Fragment extends Fragment implements OnClickListener {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		view = inflater.inflate(R.layout.signup_layout, container, false);
+
+		firebaseAuth = FirebaseAuth.getInstance();
+
 		initViews();
 		setListeners();
 		return view;
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+
+		FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+		updateUI(currentUser);
+	}
+
+	private void updateUI(FirebaseUser user) {
+
+		baseActivity.hideProgressDialog();
+		if (user != null) {
+			mStatusTextView.setText(getString(R.string.emailpassword_status_fmt,
+					user.getEmail(), user.isEmailVerified()));
+			mDetailTextView.setText(getString(R.string.firebase_status_fmt, user.getUid()));
+
+			findViewById(R.id.email_password_buttons).setVisibility(View.GONE);
+			findViewById(R.id.email_password_fields).setVisibility(View.GONE);
+			findViewById(R.id.signed_in_buttons).setVisibility(View.VISIBLE);
+
+			findViewById(R.id.verify_email_button).setEnabled(!user.isEmailVerified());
+		} else {
+			mStatusTextView.setText(R.string.signed_out);
+			mDetailTextView.setText(null);
+
+			findViewById(R.id.email_password_buttons).setVisibility(View.VISIBLE);
+			findViewById(R.id.email_password_fields).setVisibility(View.VISIBLE);
+			findViewById(R.id.signed_in_buttons).setVisibility(View.GONE);
+		}
+
 	}
 
 	// Initialize all views

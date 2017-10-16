@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "872367682956-iefb9liu9dc7pfd96g7489qgr3penclm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wordpress.nikant20.milkdiary",
+            "certificate_hash": "4fdef64851466fae2a955ba6df953626ef4ccad1"
+          }
+        },
+        {
           "client_id": "872367682956-59c7kjiv0oocmtsi0acj5t8pomgvg21n.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +37,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "872367682956-59c7kjiv0oocmtsi0acj5t8pomgvg21n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2
