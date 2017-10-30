@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.wordpress.nikant20.milkdiary.R;
 
 public class SignupActivity extends AppCompatActivity {
@@ -24,6 +25,8 @@ public class SignupActivity extends AppCompatActivity {
     EditText _reEnterPasswordText;
     Button _signupButton;
     TextView _loginLink;
+
+    FirebaseAuth firebaseAuth ;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
