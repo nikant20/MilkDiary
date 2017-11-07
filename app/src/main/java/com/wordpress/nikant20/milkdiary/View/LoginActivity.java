@@ -1,22 +1,16 @@
 package com.wordpress.nikant20.milkdiary.View;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
-
 import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -24,7 +18,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.wordpress.nikant20.milkdiary.R;
 
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends Activity {
     private static final String TAG = "LoginActivity";
     private static final int REQUEST_SIGNUP = 0;
 
@@ -38,6 +32,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
@@ -84,6 +79,7 @@ public class LoginActivity extends AppCompatActivity {
                 // Start the Signup activity
                 Intent intent = new Intent(getApplicationContext(), SignupActivity.class);
                 startActivity(intent);
+                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
 
             }
         });
@@ -135,7 +131,7 @@ public class LoginActivity extends AppCompatActivity {
         //if the email and password are not empty
         //displaying a progress dialog
 
-        progressDialog.setMessage("Registering Please Wait...");
+        progressDialog.setMessage("Logging In...");
         progressDialog.show();
 
         firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {

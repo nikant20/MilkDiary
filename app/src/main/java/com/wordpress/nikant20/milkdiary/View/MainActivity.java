@@ -1,24 +1,37 @@
 package com.wordpress.nikant20.milkdiary.View;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.wordpress.nikant20.milkdiary.R;
 
 
+
 public class MainActivity extends AppCompatActivity {
+
+    FirebaseAuth firebaseAuth;
+    FirebaseUser firebaseUser;
+    ProgressDialog progressDialog;
+    Logout logout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        logout = new Logout();
 
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        firebaseAuth = FirebaseAuth.getInstance();
+        progressDialog = new ProgressDialog(MainActivity.this, R.style.AppTheme_Dark_Dialog);
+
+
     }
 
     @Override
@@ -36,10 +49,13 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.action_Logout) {
+            logout.user_logout();
+            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+
 }
