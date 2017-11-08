@@ -24,6 +24,7 @@
         </activity>
         <activity android:name=".View.MainActivity"/>
         <activity android:name=".View.SignupActivity"/>
+        <activity android:name=".View.ForgotPasswordActivity"/>
     </application>
 
 </manifest>

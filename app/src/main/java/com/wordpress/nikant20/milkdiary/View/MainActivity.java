@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
     FirebaseUser firebaseUser;
     ProgressDialog progressDialog;
-    Logout logout;
+    LogoutActivity logoutActivity;
 
 
     @Override
@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        logout = new Logout();
+        logoutActivity = new LogoutActivity();
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         firebaseAuth = FirebaseAuth.getInstance();
@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_Logout) {
-            logout.user_logout();
+            logoutActivity.user_logout();
             startActivity(new Intent(getApplicationContext(), LoginActivity.class));
         }
 

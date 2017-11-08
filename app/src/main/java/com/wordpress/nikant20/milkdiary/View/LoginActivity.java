@@ -25,7 +25,7 @@ public class LoginActivity extends Activity {
     EditText _emailText;
     EditText _passwordText;
     Button _loginButton;
-    TextView _signupLink;
+    TextView _signupLink, _forgotPassword;
 
     private FirebaseAuth firebaseAuth;
     private ProgressDialog progressDialog;
@@ -84,6 +84,18 @@ public class LoginActivity extends Activity {
             }
         });
 
+        _forgotPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Finishing the current Activity
+                finish();
+
+                //Starting ForgotPasswordActivity
+                startActivity(new Intent(LoginActivity.this,ForgotPasswordActivity.class));
+                overridePendingTransition(R.anim.push_left_in,R.anim.push_left_out);
+            }
+        });
+
 
     }
 
@@ -116,6 +128,7 @@ public class LoginActivity extends Activity {
         _passwordText = (EditText) findViewById(R.id.input_password);
         _loginButton = (Button) findViewById(R.id.btn_login);
         _signupLink = (TextView) findViewById(R.id.link_signup);
+        _forgotPassword = findViewById(R.id.link_ForgotPassword);
 
         //Initilizing progressDialog
         progressDialog = new ProgressDialog(this);
