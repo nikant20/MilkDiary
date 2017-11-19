@@ -1,4 +1,4 @@
-package com.wordpress.nikant20.milkdiary.View;
+package com.wordpress.nikant20.milkdiary.View.LoginModule;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -16,6 +16,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.wordpress.nikant20.milkdiary.R;
+import com.wordpress.nikant20.milkdiary.View.UiModule.MainActivity;
 
 
 public class LoginActivity extends Activity {
@@ -60,7 +61,6 @@ public class LoginActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if (!validate()) {
-                   // Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
                     _loginButton.setEnabled(true);
                     return;
                 }

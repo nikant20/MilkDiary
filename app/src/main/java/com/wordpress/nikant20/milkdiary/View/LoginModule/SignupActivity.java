@@ -1,4 +1,4 @@
-package com.wordpress.nikant20.milkdiary.View;
+package com.wordpress.nikant20.milkdiary.View.LoginModule;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -18,11 +18,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.wordpress.nikant20.milkdiary.Model.User;
 import com.wordpress.nikant20.milkdiary.R;
+import com.wordpress.nikant20.milkdiary.View.UiModule.MainActivity;
 
 public class SignupActivity extends Activity {
     private static final String TAG = "SignupActivity";

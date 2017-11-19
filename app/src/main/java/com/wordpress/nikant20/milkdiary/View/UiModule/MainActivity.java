@@ -1,4 +1,4 @@
-package com.wordpress.nikant20.milkdiary.View;
+package com.wordpress.nikant20.milkdiary.View.UiModule;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -9,7 +9,8 @@ import android.view.MenuItem;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.wordpress.nikant20.milkdiary.R;
-
+import com.wordpress.nikant20.milkdiary.View.LoginModule.LoginActivity;
+import com.wordpress.nikant20.milkdiary.View.LoginModule.LogoutActivity;
 
 
 public class MainActivity extends AppCompatActivity {

@@ -1,4 +1,4 @@
-package com.wordpress.nikant20.milkdiary.View;
+package com.wordpress.nikant20.milkdiary.View.LoginModule;
 
 import android.app.Activity;
 
