@@ -32,7 +32,7 @@
                 android:textColor="#000000" />
 
             <TextView
-                android:id="@+id/textViewSEmailId"
+                android:id="@+id/textViewEmailId"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/textViewName"
@@ -46,7 +46,7 @@
                 android:id="@+id/textViewPhoneNumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/textViewSEmailId"
+                android:layout_below="@id/textViewEmailId"
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_toRightOf="@id/imageView"
@@ -115,7 +115,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/textViewLitres"
-                android:layout_toEndOf="@+id/textViewSEmailId"
+                android:layout_toEndOf="@+id/textViewEmailId"
                 android:src="@drawable/rupee" />
 
             <TextView

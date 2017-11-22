@@ -3,7 +3,7 @@
     package="com.wordpress.nikant20.milkdiary">
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
@@ -12,19 +12,20 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
-            android:name="com.wordpress.nikant20.milkdiary.View.LoginModule.LoginActivity"
-            android:label="@string/app_name" >
+            android:name=".View.LoginModule.LoginActivity"
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".View.UiModule.MainActivity"/>
-        <activity android:name=".View.LoginModule.SignupActivity"/>
-        <activity android:name=".View.LoginModule.ForgotPasswordActivity"/>
+        <activity android:name=".View.UiModule.MainActivity" />
+        <activity android:name=".View.LoginModule.SignupActivity" />
+        <activity android:name=".View.LoginModule.ForgotPasswordActivity" />
+        <activity android:name=".View.UiModule.AddCustomerActivity"></activity>
     </application>
 
 </manifest>

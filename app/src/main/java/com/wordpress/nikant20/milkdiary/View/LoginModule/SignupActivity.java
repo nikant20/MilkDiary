@@ -3,11 +3,13 @@ package com.wordpress.nikant20.milkdiary.View.LoginModule;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -33,6 +35,7 @@ public class SignupActivity extends Activity {
     EditText _mobileText;
     EditText _passwordText;
     EditText _reEnterPasswordText;
+    ImageButton imageButtonProfile;
     Button _signupButton;
     TextView _loginLink;
     RadioGroup radioGroup;
@@ -58,6 +61,7 @@ public class SignupActivity extends Activity {
         _mobileText = (EditText) findViewById(R.id.input_mobile);
         _passwordText = (EditText) findViewById(R.id.input_password);
         _reEnterPasswordText = (EditText) findViewById(R.id.input_reEnterPassword);
+        imageButtonProfile = findViewById(R.id.imageButtonProfile);
         radioGroup = findViewById(R.id.radioGroup);
         radioCustomer = findViewById(R.id.radioCustomer);
         radioMilkman = findViewById(R.id.radioMilkman);
@@ -110,7 +114,7 @@ public class SignupActivity extends Activity {
             typeofUser = "Customer";
         }
 
-        user = new User(name, email, address, mobile, typeofUser);
+        user = new User(name, email, address, mobile, typeofUser,null);
 
         firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
@@ -144,9 +148,9 @@ public class SignupActivity extends Activity {
         //user is the POJO model
         int radiogroupid = radioGroup.getCheckedRadioButtonId();
         if (radiogroupid == R.id.radioMilkman) {
-            databaseReference.child("Milkman").child(firebaseUser.getUid()).setValue(user);
+            databaseReference.child("MilkDiary").child("Milkman").child(firebaseUser.getUid()).setValue(user);
         } else {
-            databaseReference.child("EndUsers").child(firebaseUser.getUid()).setValue(user);
+            databaseReference.child("MilkDiary").child("EndUsers").child(firebaseUser.getUid()).setValue(user);
         }
 
 

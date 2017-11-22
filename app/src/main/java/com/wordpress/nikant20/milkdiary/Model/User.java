@@ -11,30 +11,18 @@ public class User {
     String address;
     String phone;
     String typeofUser;
+    String image;
 
-    public User() {
-    }
+    User(){}
 
-    public User(String name, String email, String address, String phone, String typeofUser) {
+    public User(String name, String email, String address, String phone, String typeofUser, String image) {
         this.name = name;
         this.email = email;
         this.address = address;
         this.phone = phone;
         this.typeofUser = typeofUser;
+        this.image = image;
     }
-
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", address='" + address + '\'' +
-                ", phone='" + phone + '\'' +
-                ", typeofUser='" + typeofUser + '\'' +
-                '}';
-    }
-
 
     public String getName() {
         return name;
@@ -68,7 +56,33 @@ public class User {
         this.phone = phone;
     }
 
-    public String getTypeofUser() { return typeofUser; }
+    public String getTypeofUser() {
+        return typeofUser;
+    }
 
-    public void setTypeofUser(String typeofUser) { this.typeofUser = typeofUser; }
+    public void setTypeofUser(String typeofUser) {
+        this.typeofUser = typeofUser;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", address='" + address + '\'' +
+                ", phone='" + phone + '\'' +
+                ", typeofUser='" + typeofUser + '\'' +
+                ", image='" + image + '\'' +
+                '}';
+    }
+
+
 }
