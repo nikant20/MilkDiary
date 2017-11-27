@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -36,6 +37,8 @@ import com.wordpress.nikant20.milkdiary.View.UiModule.MainActivity;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 
 public class SignupActivity extends Activity {
     private static final String TAG = "SignupActivity";
@@ -46,7 +49,7 @@ public class SignupActivity extends Activity {
     EditText _mobileText;
     EditText _passwordText;
     EditText _reEnterPasswordText;
-    ImageButton imageButtonProfile;
+    CircleImageView circleImageView;
     Button _signupButton;
     TextView _loginLink;
     RadioGroup radioGroup;
@@ -81,7 +84,7 @@ public class SignupActivity extends Activity {
         _mobileText = (EditText) findViewById(R.id.input_mobile);
         _passwordText = (EditText) findViewById(R.id.input_password);
         _reEnterPasswordText = (EditText) findViewById(R.id.input_reEnterPassword);
-        imageButtonProfile = findViewById(R.id.imageButtonProfile);
+        circleImageView = findViewById(R.id.imageButtonProfile);
         radioGroup = findViewById(R.id.radioGroup);
         radioCustomer = findViewById(R.id.radioCustomer);
         radioMilkman = findViewById(R.id.radioMilkman);
@@ -110,7 +113,7 @@ public class SignupActivity extends Activity {
             }
         });
 
-        imageButtonProfile.setOnClickListener(new View.OnClickListener() {
+        circleImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 permissionListener = new PermissionListener() {
@@ -158,10 +161,10 @@ public class SignupActivity extends Activity {
 
         images = ImagePicker.getImages(data);
         if (images != null && !images.isEmpty()) {
-            imageButtonProfile.setImageBitmap(BitmapFactory.decodeFile(images.get(0).getPath()));
+            circleImageView.setImageBitmap(BitmapFactory.decodeFile(images.get(0).getPath()));
         }
         else{
-            imageButtonProfile.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(R.drawable.userxhdpi)));
+            circleImageView.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(R.drawable.userxhdpi)));
         }
 
         super.onActivityResult(requestCode, resultCode, data);
@@ -183,7 +186,7 @@ public class SignupActivity extends Activity {
         final String mobile = _mobileText.getText().toString();
         String password = _passwordText.getText().toString();
         int radiogroupid = radioGroup.getCheckedRadioButtonId();
-        String image = String.valueOf(imageButtonProfile.getImageAlpha());
+        String image = String.valueOf(circleImageView.getImageAlpha());
         String typeofUser;
         if (radiogroupid == R.id.radioMilkman) {
             typeofUser = "Milkman";

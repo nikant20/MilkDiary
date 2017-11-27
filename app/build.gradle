@@ -50,5 +50,8 @@ dependencies {
     compile 'com.github.esafirm.android-image-picker:imagepicker:1.9.0'
     //Tedpermission Library
     compile 'gun0912.ted:tedpermission:2.1.0'
+    //Circular ImageView
+    compile 'de.hdodenhof:circleimageview:2.2.0'
+
 }
 apply plugin: 'com.google.gms.google-services'
