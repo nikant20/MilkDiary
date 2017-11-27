@@ -1,9 +1,10 @@
 package com.wordpress.nikant20.milkdiary.View.LoginModule;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.View;
@@ -14,7 +15,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import com.esafirm.imagepicker.features.ImagePicker;
+import com.esafirm.imagepicker.model.Image;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -22,9 +24,18 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.TedPermission;
 import com.wordpress.nikant20.milkdiary.Model.User;
 import com.wordpress.nikant20.milkdiary.R;
 import com.wordpress.nikant20.milkdiary.View.UiModule.MainActivity;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class SignupActivity extends Activity {
     private static final String TAG = "SignupActivity";
@@ -40,10 +51,15 @@ public class SignupActivity extends Activity {
     TextView _loginLink;
     RadioGroup radioGroup;
     RadioButton radioMilkman, radioCustomer;
+    PermissionListener permissionListener;
+    List<Image> images;
 
 
     FirebaseAuth firebaseAuth;
     DatabaseReference databaseReference;
+    UploadTask uploadTask;
+    FirebaseStorage firebaseStorage;
+    StorageReference storageReference,fileReference;
     User user;
 
     @Override
@@ -53,6 +69,10 @@ public class SignupActivity extends Activity {
 
         firebaseAuth = FirebaseAuth.getInstance();
         databaseReference = FirebaseDatabase.getInstance().getReference();
+        firebaseStorage = FirebaseStorage.getInstance();
+        storageReference = firebaseStorage.getReference().child("images");
+
+
 
 
         _nameText = (EditText) findViewById(R.id.input_name);
@@ -89,6 +109,62 @@ public class SignupActivity extends Activity {
                 overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
             }
         });
+
+        imageButtonProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                permissionListener = new PermissionListener() {
+                    @Override
+                    public void onPermissionGranted() {
+                        pickImage();
+                    }
+
+                    @Override
+                    public void onPermissionDenied(ArrayList<String> deniedPermissions) {
+
+                        Toast.makeText(getApplicationContext(),"Permission Denied",Toast.LENGTH_SHORT).show();
+
+                    }
+                };
+                TedPermission.with(getApplicationContext())
+                        .setPermissionListener(permissionListener)
+                        .setRationaleTitle("Allow Permissions")
+                        .setRationaleMessage("Allow This app to access Gallery")
+                        .setDeniedTitle("Permission denied")
+                        .setDeniedMessage(
+                                "If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
+                        .setGotoSettingButtonText("Allow")
+                        .setPermissions(Manifest.permission.READ_EXTERNAL_STORAGE)
+                        .check();
+
+            }
+        });
+
+    }
+
+    private void pickImage() {
+        ImagePicker.create(SignupActivity.this)
+                .returnAfterFirst(true) // set whether pick action or camera action should return immediate result or not. Only works in single mode for image picker
+                .folderMode(true) // set folder mode (false by default)
+                .single()
+                .folderTitle("Folder") // folder selection title
+                .imageTitle("Tap to select")
+                .start(0); // image selection title
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        images = ImagePicker.getImages(data);
+        if (images != null && !images.isEmpty()) {
+            imageButtonProfile.setImageBitmap(BitmapFactory.decodeFile(images.get(0).getPath()));
+        }
+        else{
+            imageButtonProfile.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(R.drawable.userxhdpi)));
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     public void signup() {
@@ -107,6 +183,7 @@ public class SignupActivity extends Activity {
         final String mobile = _mobileText.getText().toString();
         String password = _passwordText.getText().toString();
         int radiogroupid = radioGroup.getCheckedRadioButtonId();
+        String image = String.valueOf(imageButtonProfile.getImageAlpha());
         String typeofUser;
         if (radiogroupid == R.id.radioMilkman) {
             typeofUser = "Milkman";
@@ -114,7 +191,7 @@ public class SignupActivity extends Activity {
             typeofUser = "Customer";
         }
 
-        user = new User(name, email, address, mobile, typeofUser,null);
+        user = new User(name, email, address, mobile, typeofUser, image);
 
         firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
@@ -140,6 +217,7 @@ public class SignupActivity extends Activity {
         });
 
     }
+
 
     //Method to add Users to Firebase Db
     private void registerUser(FirebaseUser firebaseUser) {
