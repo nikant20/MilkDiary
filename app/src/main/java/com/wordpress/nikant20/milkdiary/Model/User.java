@@ -13,7 +13,7 @@ public class User {
     String typeofUser;
     String image;
 
-    User(){}
+    public User(){}
 
     public User(String name, String email, String address, String phone, String typeofUser, String image) {
         this.name = name;

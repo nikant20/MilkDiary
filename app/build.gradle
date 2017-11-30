@@ -22,27 +22,28 @@ android {
 }
 
 dependencies {
-    implementation 'com.google.firebase:firebase-storage:11.4.2'
+    implementation 'com.google.firebase:firebase-storage:11.4.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile 'com.android.support:appcompat-v7:27.+'
-    compile 'com.android.support:design:26.+'
+    compile 'com.android.support:design:27.+'
     //Firebase authentication & database library
-    compile 'com.google.firebase:firebase-auth:11.4.2'
-    compile 'com.google.firebase:firebase-database:11.4.2'
-    compile 'com.google.firebase:firebase-storage:11.4.2'
+    compile 'com.google.firebase:firebase-auth:11.4.0'
+    compile 'com.google.firebase:firebase-database:11.4.0'
+    compile 'com.google.firebase:firebase-storage:11.4.0'
+    compile 'com.google.android.gms:play-services:11.4.0'
     testCompile 'junit:junit:4.12'
     //RecyclerView Library
-    implementation 'com.android.support:recyclerview-v7:27.0.0'
-    implementation 'com.android.support:cardview-v7:27.0.0'
+    implementation 'com.android.support:recyclerview-v7:27.0.2'
+    implementation 'com.android.support:cardview-v7:27.0.2'
 
     //FirebaseUi library open source
-    compile 'com.firebaseui:firebase-ui:3.+'
-    //Google GLide library to download images
-    compile 'com.github.bumptech.glide:glide:3.6.1'
+    compile 'com.firebaseui:firebase-ui:2.4.0'
+    //Picasso image library to download images
+    compile 'com.squareup.picasso:picasso:2.5.2'
     //FirebaseUi storage library
     compile 'com.firebaseui:firebase-ui-storage:0.6.0'
 

@@ -3,12 +3,16 @@ package com.wordpress.nikant20.milkdiary.View.LoginModule;
 import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -16,9 +20,13 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 import com.esafirm.imagepicker.features.ImagePicker;
 import com.esafirm.imagepicker.model.Image;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,6 +34,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.gun0912.tedpermission.PermissionListener;
@@ -34,6 +43,8 @@ import com.wordpress.nikant20.milkdiary.Model.User;
 import com.wordpress.nikant20.milkdiary.R;
 import com.wordpress.nikant20.milkdiary.View.UiModule.MainActivity;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,14 +67,17 @@ public class SignupActivity extends Activity {
     RadioButton radioMilkman, radioCustomer;
     PermissionListener permissionListener;
     List<Image> images;
-
+  //  Uri filepath;
+    public Uri downloadUrl;
 
     FirebaseAuth firebaseAuth;
-    DatabaseReference databaseReference;
+    DatabaseReference databaseReference,mDatabase;
     UploadTask uploadTask;
     FirebaseStorage firebaseStorage;
-    StorageReference storageReference,fileReference;
+    StorageReference storageReference;
     User user;
+
+    private static final int GALLERY_INTENT = 2;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,7 +87,8 @@ public class SignupActivity extends Activity {
         firebaseAuth = FirebaseAuth.getInstance();
         databaseReference = FirebaseDatabase.getInstance().getReference();
         firebaseStorage = FirebaseStorage.getInstance();
-        storageReference = firebaseStorage.getReference().child("images");
+        storageReference = FirebaseStorage.getInstance().getReference();
+        mDatabase = FirebaseDatabase.getInstance().getReference(Constants.DATABASE_PATH_UPLOADS);
 
 
 
@@ -90,6 +105,7 @@ public class SignupActivity extends Activity {
         radioMilkman = findViewById(R.id.radioMilkman);
         _signupButton = (Button) findViewById(R.id.btn_signup);
         _loginLink = (TextView) findViewById(R.id.link_login);
+        _signupButton.setEnabled(false);
 
         _signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -146,30 +162,112 @@ public class SignupActivity extends Activity {
     }
 
     private void pickImage() {
-        ImagePicker.create(SignupActivity.this)
-                .returnAfterFirst(true) // set whether pick action or camera action should return immediate result or not. Only works in single mode for image picker
-                .folderMode(true) // set folder mode (false by default)
-                .single()
-                .folderTitle("Folder") // folder selection title
-                .imageTitle("Tap to select")
-                .start(0); // image selection title
+       Intent intent = new Intent(Intent.ACTION_PICK);
+       intent.setType("image/*");
+       startActivityForResult(intent,GALLERY_INTENT);
     }
 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-        images = ImagePicker.getImages(data);
+        if (requestCode == GALLERY_INTENT && resultCode ==RESULT_OK){
+            Uri uri = data.getData();
+            Bitmap bitmap = null;
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+                circleImageView.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+            StorageReference filepath = storageReference.child("Photos").child(uri.getLastPathSegment());
+
+
+            filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    downloadUrl =  taskSnapshot.getDownloadUrl();
+                    _signupButton.setEnabled(true);
+
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                 Toast.makeText(getApplicationContext(),"Image uploading failed",Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        }
+
+  /*      images = ImagePicker.getImages(data);
+        filepath = data.getData();
         if (images != null && !images.isEmpty()) {
-            circleImageView.setImageBitmap(BitmapFactory.decodeFile(images.get(0).getPath()));
+
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filepath);
+                circleImageView.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         }
         else{
             circleImageView.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(R.drawable.userxhdpi)));
         }
+*/
 
-        super.onActivityResult(requestCode, resultCode, data);
+    }
+ /*   public String getFileExtension(Uri uri) {
+        ContentResolver cR = getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(cR.getType(uri));
     }
 
+    private void uploadFile() {
+        //checking if file is available
+        if (filepath != null) {
+            //displaying progress dialog while image is uploading
+            final ProgressDialog progressDialog = new ProgressDialog(this);
+            progressDialog.setTitle("Uploading");
+            progressDialog.show();
+
+            //getting the storage reference
+            StorageReference sRef = storageReference.child(Constants.STORAGE_PATH_UPLOADS + System.currentTimeMillis() + "." + getFileExtension(filepath));
+
+            //adding the file to reference
+
+            sRef.putFile(filepath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    //creating the upload object to store uploaded image details
+                    Upload upload = new Upload(editTextName.getText().toString().trim(), taskSnapshot.getDownloadUrl().toString());
+
+                    //adding an upload to firebase database
+                    String uploadId = mDatabase.push().getKey();
+                    mDatabase.child(uploadId).setValue(upload);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    progressDialog.dismiss();
+                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                    double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                    progressDialog.setMessage("Uploaded " + ((int) progress) + "%...");
+                }
+            });
+        } else {
+            //display an error if no file is selected
+        }
+    }
+
+*/
     public void signup() {
 
         _signupButton.setEnabled(false);
@@ -180,13 +278,14 @@ public class SignupActivity extends Activity {
         progressDialog.setMessage("Creating Account...");
         progressDialog.show();
 
+
         final String name = _nameText.getText().toString();
         String address = _addressText.getText().toString();
         String email = _emailText.getText().toString();
         final String mobile = _mobileText.getText().toString();
         String password = _passwordText.getText().toString();
         int radiogroupid = radioGroup.getCheckedRadioButtonId();
-        String image = String.valueOf(circleImageView.getImageAlpha());
+        String image = String.valueOf((downloadUrl));
         String typeofUser;
         if (radiogroupid == R.id.radioMilkman) {
             typeofUser = "Milkman";

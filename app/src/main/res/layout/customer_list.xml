@@ -15,11 +15,21 @@
             android:layout_height="189dp"
             android:padding="8dp">
 
-            <ImageView
+ <!--           <ImageView
                 android:id="@+id/imageView"
                 android:layout_width="120dp"
                 android:layout_height="90dp"
-                android:padding="4dp" />
+                android:padding="4dp" />  -->
+            <de.hdodenhof.circleimageview.CircleImageView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/imageView"
+                android:layout_width="100dp"
+                android:layout_height="80dp"
+                android:layout_marginBottom="24dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/userxhdpi"
+                app:civ_border_width="2dp"
+                app:civ_border_color="#FF000000"/>
 
             <TextView
                 android:id="@+id/textViewName"
@@ -76,6 +86,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/textViewAddress"
+                android:inputType="numberDecimal"
                 android:layout_marginTop="16dp"
                 android:text="01"
                 android:gravity="center"
@@ -85,7 +96,6 @@
                 android:id="@+id/textViewLitres"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
                 android:layout_alignBaseline="@+id/editTextMilkInLitres"
                 android:layout_alignBottom="@+id/editTextMilkInLitres"
                 android:layout_toEndOf="@+id/editTextMilkInLitres"
@@ -100,6 +110,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/editTextMilkInLitres"
                 android:layout_toEndOf="@+id/textViewAddress"
+                android:layout_toLeftOf="@+id/imageViewRupee"
+                android:layout_marginLeft="5dp"
                 android:src="@drawable/calendar" />
 
             <android.support.design.widget.TextInputEditText
@@ -108,26 +120,29 @@
                 android:layout_alignTop="@+id/imageButtonCalendar"
                 android:layout_toEndOf="@+id/imageView"
                 android:hint="Rate"
-                android:id="@+id/textInputEditText" />
+                android:inputType="numberDecimal"
+                android:id="@+id/textInputEditTextRate" />
 
             <ImageView
-                android:id="@+id/imageView2"
+                android:id="@+id/imageViewRupee"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/textViewLitres"
                 android:layout_toEndOf="@+id/textViewEmailId"
+                android:layout_toRightOf="@+id/textInputEditTextRate"
+                android:layout_marginLeft="2dp"
                 android:src="@drawable/rupee" />
 
             <TextView
                 android:id="@+id/textViewSubmit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBaseline="@+id/textInputEditText"
-                android:layout_alignBottom="@+id/textInputEditText"
+                android:layout_alignBaseline="@+id/textInputEditTextRate"
+                android:layout_alignBottom="@+id/textInputEditTextRate"
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="12dp"
                 android:background="@drawable/roundedcorner"
-                android:padding="2dp"
+                android:padding="10dp"
                 android:text="Submit"
                 android:textColor="#FFFFFF"
                 android:textSize="20dp"
