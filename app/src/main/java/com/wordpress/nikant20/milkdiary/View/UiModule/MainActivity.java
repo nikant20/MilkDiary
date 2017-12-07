@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
                 userViewHolder.setOnClickListener(new UserViewHolder.ClickListener() {
                     @Override
                     public void onItemClick(View view, int position, CostModel costModel) {
-
+                      //handle clicks here
 
                     }
                 });
