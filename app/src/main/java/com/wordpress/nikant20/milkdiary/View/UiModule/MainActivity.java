@@ -146,6 +146,7 @@ public class MainActivity extends AppCompatActivity {
             rate = Float.valueOf(editTextRate.getText().toString());
 
             //Converting edittext input into date format
+            //
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
             try {
