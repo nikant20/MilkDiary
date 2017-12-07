@@ -4,25 +4,34 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.squareup.picasso.Picasso;
+import com.wordpress.nikant20.milkdiary.Model.CostModel;
 import com.wordpress.nikant20.milkdiary.Model.User;
 import com.wordpress.nikant20.milkdiary.R;
 import com.wordpress.nikant20.milkdiary.View.LoginModule.LoginActivity;
 import com.wordpress.nikant20.milkdiary.View.LoginModule.LogoutActivity;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -37,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     ProgressDialog progressDialog;
     LogoutActivity logoutActivity;
     User user;
+    CostModel costModel;
 
 
     @Override
@@ -46,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
 
         logoutActivity = new LogoutActivity();
         user = new User();
+        costModel = new CostModel();
+
 
         recyclerView = findViewById(R.id.recyclerView);
         floatingActionButton = findViewById(R.id.fabAddCustomer);
@@ -60,47 +72,9 @@ public class MainActivity extends AppCompatActivity {
         databaseReference = firebaseDatabase.getReference().child("MilkDiary").child("EndUsers");
         progressDialog = new ProgressDialog(MainActivity.this, R.style.AppTheme_Dark_Dialog);
 
-
-
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-/*
-        //Querying database
-        Query query = databaseReference.child("MilkDiary").child("EndUsers");
-        FirebaseRecyclerOptions<User> options = new FirebaseRecyclerOptions.Builder<User>().setQuery(query,User.class).build();
-
-
-        FirebaseRecyclerAdapter<User,UserViewHolder> adapter = new FirebaseRecyclerAdapter<User, UserViewHolder>(options) {
-
-            @Override
-            public UserViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.customer_list,parent,false);
-
-                return new UserViewHolder(view);
-            }
-
-            @Override
-            protected void onBindViewHolder(UserViewHolder holder, int position, User model) {
-              holder.setName(model.getName());
-              holder.setEmail(model.getEmail());
-              holder.setPhone(model.getPhone());
-              holder.setAddress(model.getAddress());
-              Glide.with(getApplicationContext()).load(databaseReference.child("MilkDiary").child("EndUsers").child("image"));
-
-            }
-
-
-        };
-
-        recyclerView.setAdapter(adapter); */
-
-     /*   DatabaseReference dataRefrence = FirebaseDatabase.getInstance().getReference("MilkDiary").child("MilkMan");
-        DatabaseReference keyQuery = FirebaseDatabase.getInstance().getReference("MilkDiary").child("EndUsers");
-        FirebaseRecyclerOptions<User> recyclerOptions = new FirebaseRecyclerOptions.Builder<User>().setIndexedQuery(keyQuery,dataRefrence,User.class).build();
-       */
-
 
     }
 
@@ -109,14 +83,29 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
 
 
-        FirebaseRecyclerAdapter<User,UserViewHolder> adapter = new FirebaseRecyclerAdapter<User, UserViewHolder>(User.class,R.layout.customer_list,UserViewHolder.class,databaseReference) {
+        FirebaseRecyclerAdapter<User, UserViewHolder> adapter = new FirebaseRecyclerAdapter<User, UserViewHolder>(User.class, R.layout.customer_list, UserViewHolder.class, databaseReference) {
             @Override
             protected void populateViewHolder(UserViewHolder holder, User model, int position) {
                 holder.setName(model.getName());
                 holder.setEmail(model.getEmail());
                 holder.setPhone(model.getPhone());
                 holder.setAddress(model.getAddress());
-                holder.setImage(getApplicationContext(),model.getImage());
+                holder.setImage(getApplicationContext(), model.getImage());
+
+
+            }
+
+            @Override
+            public UserViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                UserViewHolder userViewHolder = super.onCreateViewHolder(parent, viewType);
+                userViewHolder.setOnClickListener(new UserViewHolder.ClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position, CostModel costModel) {
+
+
+                    }
+                });
+                return userViewHolder;
             }
         };
         recyclerView.setAdapter(adapter);
@@ -124,33 +113,81 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public static class UserViewHolder extends RecyclerView.ViewHolder{
+    public static class UserViewHolder extends RecyclerView.ViewHolder {
+        EditText editTextMilkInLitres;
+        EditText editTextRate;
+        EditText editTextDate;
+        TextView textViewSubmit;
+        CostModel costModel;
+        Date date;
+        Float milkInLitres;
+        Float rate;
 
         View mView;
 
+        UserViewHolder.ClickListener mClickListener;
+
+        //Interface to send callbacks...
+        public interface ClickListener {
+            public void onItemClick(View view, int position, CostModel costModel);
+        }
+
+        public void setOnClickListener(UserViewHolder.ClickListener clickListener) {
+            mClickListener = clickListener;
+        }
+
         public UserViewHolder(View itemView) {
             super(itemView);
+            editTextMilkInLitres = itemView.findViewById(R.id.editTextMilkInLitres);
+            editTextRate = itemView.findViewById(R.id.editTextRate);
+            editTextDate = itemView.findViewById(R.id.editTextDate);
+            textViewSubmit = itemView.findViewById(R.id.textViewSubmit);
+            milkInLitres = Float.valueOf(editTextMilkInLitres.getText().toString());
+            rate = Float.valueOf(editTextRate.getText().toString());
+
+            //Converting edittext input into date format
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+            try {
+                date = sdf.parse(String.valueOf(editTextDate.getText()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+
+            textViewSubmit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mClickListener.onItemClick(v, getAdapterPosition(), costModel);
+                    costModel = new CostModel(milkInLitres, rate, date);
+                }
+            });
 
             mView = itemView;
 
         }
-        public void setName(String name){
+
+        public void setName(String name) {
             TextView post_name = mView.findViewById(R.id.textViewName);
             post_name.setText(name);
         }
-        public void setEmail(String email){
+
+        public void setEmail(String email) {
             TextView post_email = mView.findViewById(R.id.textViewEmailId);
             post_email.setText(email);
         }
-        public void setPhone(String phone){
+
+        public void setPhone(String phone) {
             TextView post_phone = mView.findViewById(R.id.textViewPhoneNumber);
             post_phone.setText(phone);
         }
-        public void setAddress(String address){
+
+        public void setAddress(String address) {
             TextView post_address = mView.findViewById(R.id.textViewAddress);
             post_address.setText(address);
         }
-        public void setImage(Context context,String image){
+
+        public void setImage(Context context, String image) {
             CircleImageView post_image = mView.findViewById(R.id.imageView);
             Picasso.with(context).load(image).fit().centerCrop().placeholder(R.drawable.userxhdpi).error(R.drawable.userxhdpi).into(post_image);
         }
@@ -159,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
 
     //Handling floating action bar onClick
     private void clickHandler() {
-        startActivity(new Intent(MainActivity.this,AddCustomerActivity.class));
+        startActivity(new Intent(MainActivity.this, AddCustomerActivity.class));
     }
 
 
