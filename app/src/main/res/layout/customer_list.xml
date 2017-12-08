@@ -117,14 +117,12 @@
                 android:layout_marginTop="30dp"
                 android:src="@drawable/rupee" />
 
-            <EditText
-                android:id="@+id/editTextDate"
+            <TextView
+                android:id="@+id/textViewDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="15dp"
-                android:clickable="true"
-                android:editable="false"
                 android:text="20/10/2018"
                 android:textSize="20sp" />
 

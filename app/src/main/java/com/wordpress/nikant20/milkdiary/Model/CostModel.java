@@ -9,11 +9,11 @@ import java.util.Date;
 public class CostModel {
     Float milkInLitres;
     Float rate;
-    Date date;
+    String date;
 
     public CostModel(){}
 
-    public CostModel(Float milkInLitres, Float rate, Date date) {
+    public CostModel(Float milkInLitres, Float rate, String date) {
         this.milkInLitres = milkInLitres;
         this.rate = rate;
         this.date = date;
@@ -35,11 +35,11 @@ public class CostModel {
         this.rate = rate;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
