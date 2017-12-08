@@ -97,12 +97,13 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public UserViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                UserViewHolder userViewHolder = super.onCreateViewHolder(parent, viewType);
+                final UserViewHolder userViewHolder = super.onCreateViewHolder(parent, viewType);
                 userViewHolder.setOnClickListener(new UserViewHolder.ClickListener() {
                     @Override
-                    public void onItemClick(View view, int position, CostModel costModel) {
-                      //handle clicks here
-
+                    public void onItemClick(View view, int position) {
+                      costModel = new CostModel(userViewHolder.milkInLitres,userViewHolder.rate,userViewHolder.date);
+                      Toast.makeText(getApplicationContext(),"Value of rate is: "+costModel.getDate(),Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getApplicationContext(),"On item clicked at position "+position,Toast.LENGTH_SHORT).show();
                     }
                 });
                 return userViewHolder;
@@ -129,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Interface to send callbacks...
         public interface ClickListener {
-            public void onItemClick(View view, int position, CostModel costModel);
+            public void onItemClick(View view, int position);
         }
 
         public void setOnClickListener(UserViewHolder.ClickListener clickListener) {
@@ -159,8 +160,7 @@ public class MainActivity extends AppCompatActivity {
             textViewSubmit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mClickListener.onItemClick(v, getAdapterPosition(), costModel);
-                    costModel = new CostModel(milkInLitres, rate, date);
+                    mClickListener.onItemClick(v, getAdapterPosition());
                 }
             });
 
