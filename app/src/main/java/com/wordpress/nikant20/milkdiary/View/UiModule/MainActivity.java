@@ -1,5 +1,6 @@
 package com.wordpress.nikant20.milkdiary.View.UiModule;
 
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -31,6 +33,7 @@ import com.wordpress.nikant20.milkdiary.View.LoginModule.LogoutActivity;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -50,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
     EditText editTextMilkInLitres;
     EditText editTextRate;
     EditText editTextDate;
-    Date date;
+//    Date date;
     Float milkInLitres;
     Float rate;
 
@@ -110,24 +113,53 @@ public class MainActivity extends AppCompatActivity {
                 final UserViewHolder userViewHolder = super.onCreateViewHolder(parent, viewType);
                 userViewHolder.setOnClickListener(new UserViewHolder.ClickListener() {
                     @Override
-                    public void onItemClick(View view, int position, Float milkInLitres, Float rate, Date date, EditText editTextMilkInLitres, EditText editTextRate, EditText editTextDate) {
+                    public void onItemClick(View view, int position, Float milkInLitres, Float rate, Date date, EditText editTextMilkInLitres, EditText editTextRate, final EditText editTextDate) {
 
                         milkInLitres = Float.valueOf(editTextMilkInLitres.getText().toString());
                         rate = Float.valueOf(editTextRate.getText().toString());
                         //Converting edittext input into date format
                         //
-                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+//                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+//
+//                        try {
+//                            date = sdf.parse(String.valueOf(editTextDate.getText()));
+//                        } catch (ParseException e) {
+//                            e.printStackTrace();
+//                        }
 
-                        try {
-                            date = sdf.parse(String.valueOf(editTextDate.getText()));
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
+                        final Calendar myCalendar = Calendar.getInstance();
+                        final DatePickerDialog.OnDateSetListener date1 = new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                                myCalendar.set(Calendar.YEAR, year);
+                                myCalendar.set(Calendar.MONTH, month);
+                                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                                updateLabel();
+                            }
+
+                            private void updateLabel() {
+                                String myFormat = "MM/dd/yy"; //In which you need put here
+                                SimpleDateFormat sdf = new SimpleDateFormat(myFormat);
+
+                               editTextDate.setText(sdf.format(myCalendar.getTime()));
+                               date  = editTextDate.getText().toString();
+
+                            }
+                        };
+                        editTextDate.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                new DatePickerDialog(getApplicationContext(), date1, myCalendar
+                                        .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                            }
+                        });
 
 
-                        costModel = new CostModel(milkInLitres, rate, date);
-                        Toast.makeText(getApplicationContext(), "Value of rate is: " + costModel.getMilkInLitres(), Toast.LENGTH_LONG).show();
-                        //Toast.makeText(getApplicationContext(),"On item clicked at position "+position,Toast.LENGTH_SHORT).show();
+
+                       costModel = new CostModel(milkInLitres, rate, date);
+
                     }
                 });
                 return userViewHolder;
