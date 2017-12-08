@@ -47,6 +47,12 @@ public class MainActivity extends AppCompatActivity {
     LogoutActivity logoutActivity;
     User user;
     CostModel costModel;
+    EditText editTextMilkInLitres;
+    EditText editTextRate;
+    EditText editTextDate;
+    Date date;
+    Float milkInLitres;
+    Float rate;
 
 
     @Override
@@ -57,6 +63,10 @@ public class MainActivity extends AppCompatActivity {
         logoutActivity = new LogoutActivity();
         user = new User();
         costModel = new CostModel();
+
+        editTextMilkInLitres = findViewById(R.id.editTextMilkInLitres);
+        editTextRate = findViewById(R.id.editTextRate);
+        editTextDate = findViewById(R.id.editTextDate);
 
 
         recyclerView = findViewById(R.id.recyclerView);
@@ -100,10 +110,24 @@ public class MainActivity extends AppCompatActivity {
                 final UserViewHolder userViewHolder = super.onCreateViewHolder(parent, viewType);
                 userViewHolder.setOnClickListener(new UserViewHolder.ClickListener() {
                     @Override
-                    public void onItemClick(View view, int position) {
-                      costModel = new CostModel(userViewHolder.milkInLitres,userViewHolder.rate,userViewHolder.date);
-                      Toast.makeText(getApplicationContext(),"Value of rate is: "+costModel.getDate(),Toast.LENGTH_LONG).show();
-                    //Toast.makeText(getApplicationContext(),"On item clicked at position "+position,Toast.LENGTH_SHORT).show();
+                    public void onItemClick(View view, int position, Float milkInLitres, Float rate, Date date, EditText editTextMilkInLitres, EditText editTextRate, EditText editTextDate) {
+
+                        milkInLitres = Float.valueOf(editTextMilkInLitres.getText().toString());
+                        rate = Float.valueOf(editTextRate.getText().toString());
+                        //Converting edittext input into date format
+                        //
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+                        try {
+                            date = sdf.parse(String.valueOf(editTextDate.getText()));
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
+
+                        costModel = new CostModel(milkInLitres, rate, date);
+                        Toast.makeText(getApplicationContext(), "Value of rate is: " + costModel.getMilkInLitres(), Toast.LENGTH_LONG).show();
+                        //Toast.makeText(getApplicationContext(),"On item clicked at position "+position,Toast.LENGTH_SHORT).show();
                     }
                 });
                 return userViewHolder;
@@ -130,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Interface to send callbacks...
         public interface ClickListener {
-            public void onItemClick(View view, int position);
+            public void onItemClick(View view, int position, Float milkinLitres, Float rate, Date date, EditText editTextMilkInLitres, EditText editTextRate, EditText editTextDate);
         }
 
         public void setOnClickListener(UserViewHolder.ClickListener clickListener) {
@@ -143,24 +167,24 @@ public class MainActivity extends AppCompatActivity {
             editTextRate = itemView.findViewById(R.id.editTextRate);
             editTextDate = itemView.findViewById(R.id.editTextDate);
             textViewSubmit = itemView.findViewById(R.id.textViewSubmit);
-            milkInLitres = Float.valueOf(editTextMilkInLitres.getText().toString());
-            rate = Float.valueOf(editTextRate.getText().toString());
+//            milkInLitres = Float.valueOf(editTextMilkInLitres.getText().toString());
+//            rate = Float.valueOf(editTextRate.getText().toString());
 
             //Converting edittext input into date format
             //
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-
-            try {
-                date = sdf.parse(String.valueOf(editTextDate.getText()));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+//            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+//
+//            try {
+//                date = sdf.parse(String.valueOf(editTextDate.getText()));
+//            } catch (ParseException e) {
+//                e.printStackTrace();
+//            }
 
 
             textViewSubmit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mClickListener.onItemClick(v, getAdapterPosition());
+                    mClickListener.onItemClick(v, getAdapterPosition(), milkInLitres, rate, date, editTextMilkInLitres, editTextRate, editTextDate);
                 }
             });
 
