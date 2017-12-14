@@ -30,6 +30,7 @@ public class LoginActivity extends Activity {
 
     private FirebaseAuth firebaseAuth;
     private ProgressDialog progressDialog;
+    String uid;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -154,6 +155,7 @@ public class LoginActivity extends Activity {
                 progressDialog.dismiss();
 
                 if (task.isSuccessful()) {
+                    uid = String.valueOf(task.getResult().getUser());
                     finish();
                     startActivity(new Intent(getApplicationContext(), MainActivity.class));
                 }else {

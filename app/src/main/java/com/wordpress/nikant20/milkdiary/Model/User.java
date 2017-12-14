@@ -1,11 +1,16 @@
 package com.wordpress.nikant20.milkdiary.Model;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+
 /**
  * Created by nikant20 on 11/7/2017.
  */
 
 public class User {
-
+    String userId;
     String name;
     String email;
     String address;
@@ -22,6 +27,21 @@ public class User {
         this.phone = phone;
         this.typeofUser = typeofUser;
         this.image = image;
+    }
+    public User(String name, String email, String address, String phone,String image) {
+        this.name = name;
+        this.email = email;
+        this.address = address;
+        this.phone = phone;
+        this.image = image;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getName() {

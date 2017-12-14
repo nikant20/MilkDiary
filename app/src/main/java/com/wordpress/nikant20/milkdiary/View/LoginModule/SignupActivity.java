@@ -172,7 +172,7 @@ public class SignupActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == GALLERY_INTENT && resultCode ==RESULT_OK){
+        if (requestCode == GALLERY_INTENT && resultCode == RESULT_OK) {
             Uri uri = data.getData();
             Bitmap bitmap = null;
             try {
@@ -189,85 +189,19 @@ public class SignupActivity extends Activity {
             filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    downloadUrl =  taskSnapshot.getDownloadUrl();
+                    downloadUrl = taskSnapshot.getDownloadUrl();
                     _signupButton.setEnabled(true);
 
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                 Toast.makeText(getApplicationContext(),"Image uploading failed",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Image uploading failed", Toast.LENGTH_SHORT).show();
                 }
             });
 
         }
-
-  /*      images = ImagePicker.getImages(data);
-        filepath = data.getData();
-        if (images != null && !images.isEmpty()) {
-
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filepath);
-                circleImageView.setImageBitmap(bitmap);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        }
-        else{
-            circleImageView.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(R.drawable.userxhdpi)));
-        }
-*/
-
     }
- /*   public String getFileExtension(Uri uri) {
-        ContentResolver cR = getContentResolver();
-        MimeTypeMap mime = MimeTypeMap.getSingleton();
-        return mime.getExtensionFromMimeType(cR.getType(uri));
-    }
-
-    private void uploadFile() {
-        //checking if file is available
-        if (filepath != null) {
-            //displaying progress dialog while image is uploading
-            final ProgressDialog progressDialog = new ProgressDialog(this);
-            progressDialog.setTitle("Uploading");
-            progressDialog.show();
-
-            //getting the storage reference
-            StorageReference sRef = storageReference.child(Constants.STORAGE_PATH_UPLOADS + System.currentTimeMillis() + "." + getFileExtension(filepath));
-
-            //adding the file to reference
-
-            sRef.putFile(filepath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    //creating the upload object to store uploaded image details
-                    Upload upload = new Upload(editTextName.getText().toString().trim(), taskSnapshot.getDownloadUrl().toString());
-
-                    //adding an upload to firebase database
-                    String uploadId = mDatabase.push().getKey();
-                    mDatabase.child(uploadId).setValue(upload);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    progressDialog.dismiss();
-                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-                }
-            }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                    double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                    progressDialog.setMessage("Uploaded " + ((int) progress) + "%...");
-                }
-            });
-        } else {
-            //display an error if no file is selected
-        }
-    }
-
-*/
     public void signup() {
 
         _signupButton.setEnabled(false);
@@ -305,7 +239,6 @@ public class SignupActivity extends Activity {
 
                     //Creating method to add extra data to user
                     registerUser(task.getResult().getUser());
-
 
                     //Starting new Intent
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);

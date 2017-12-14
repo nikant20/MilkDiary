@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,21 +22,36 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Response;
+import com.android.volley.toolbox.StringRequest;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Request;
 import com.wordpress.nikant20.milkdiary.Model.CostModel;
 import com.wordpress.nikant20.milkdiary.Model.User;
 import com.wordpress.nikant20.milkdiary.R;
 import com.wordpress.nikant20.milkdiary.View.LoginModule.LoginActivity;
 import com.wordpress.nikant20.milkdiary.View.LoginModule.LogoutActivity;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -46,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
     FirebaseDatabase firebaseDatabase;
-    DatabaseReference databaseReference;
+    DatabaseReference databaseReference, mDatabaseReference;
     ProgressDialog progressDialog;
     LogoutActivity logoutActivity;
     User user;
@@ -54,7 +70,11 @@ public class MainActivity extends AppCompatActivity {
     EditText editTextMilkInLitres;
     EditText editTextRate;
     TextView textViewDate;
-
+    List<CostModel> costModelList;
+    FirebaseUser firebaseUser;
+    int currentPosition;
+    String adapterKey;
+    List<String> adapterKeyList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +84,8 @@ public class MainActivity extends AppCompatActivity {
         logoutActivity = new LogoutActivity();
         user = new User();
         costModel = new CostModel();
+        costModelList = new ArrayList<>();
+        adapterKeyList = new ArrayList<>();
 
         editTextMilkInLitres = findViewById(R.id.editTextMilkInLitres);
         editTextRate = findViewById(R.id.editTextRate);
@@ -79,13 +101,41 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
         firebaseDatabase = FirebaseDatabase.getInstance();
+        mDatabaseReference = firebaseDatabase.getReference();
         databaseReference = firebaseDatabase.getReference().child("MilkDiary").child("EndUsers");
         progressDialog = new ProgressDialog(MainActivity.this, R.style.AppTheme_Dark_Dialog);
 
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+        databaseReference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+                adapterKey = dataSnapshot.getKey();
+                Log.i("adapterKey",adapterKey);
+                adapterKeyList.add(adapterKey);
+                Collections.reverse(adapterKeyList);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
 
     }
 
@@ -94,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
 
 
-        FirebaseRecyclerAdapter<User, UserViewHolder> adapter = new FirebaseRecyclerAdapter<User, UserViewHolder>(User.class, R.layout.customer_list, UserViewHolder.class, databaseReference) {
+        final FirebaseRecyclerAdapter<User, UserViewHolder> adapter = new FirebaseRecyclerAdapter<User, UserViewHolder>(User.class, R.layout.customer_list, UserViewHolder.class, databaseReference) {
             @Override
             protected void populateViewHolder(UserViewHolder holder, User model, int position) {
                 holder.setName(model.getName());
@@ -102,8 +152,6 @@ public class MainActivity extends AppCompatActivity {
                 holder.setPhone(model.getPhone());
                 holder.setAddress(model.getAddress());
                 holder.setImage(getApplicationContext(), model.getImage());
-
-
             }
 
             @Override
@@ -115,8 +163,14 @@ public class MainActivity extends AppCompatActivity {
                         milkinLitres = Float.valueOf(editTextMilkInLitres.getText().toString());
                         rate = Float.valueOf(editTextRate.getText().toString());
                         date = textViewDate.getText().toString();
-
+                        currentPosition = position;
+                        Log.i("position", String.valueOf(currentPosition));
                         costModel = new CostModel(milkinLitres, rate, date);
+                        costModelList.add(costModel);
+
+                        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                        String key = adapterKeyList.get(currentPosition);
+                      mDatabaseReference.child("MilkDiary").child("Diary").child(firebaseUser.getUid()).child(key).push().setValue(costModel);
                     }
 
                 });
@@ -124,7 +178,6 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         recyclerView.setAdapter(adapter);
-
 
     }
 
