@@ -24,9 +24,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".View.UiModule.MainActivity" />
+        <activity android:name=".View.UiModule.ShowTransaction"/>
         <activity android:name=".View.LoginModule.SignupActivity" />
         <activity android:name=".View.LoginModule.ForgotPasswordActivity" />
         <activity android:name=".View.UiModule.AddCustomerActivity"></activity>
+
     </application>
 
 </manifest>

@@ -1,11 +1,9 @@
 package com.wordpress.nikant20.milkdiary.View.UiModule;
 
-import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,15 +13,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.android.volley.Response;
-import com.android.volley.toolbox.StringRequest;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -33,26 +24,16 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Request;
 import com.wordpress.nikant20.milkdiary.Model.CostModel;
 import com.wordpress.nikant20.milkdiary.Model.User;
 import com.wordpress.nikant20.milkdiary.R;
 import com.wordpress.nikant20.milkdiary.View.LoginModule.LoginActivity;
 import com.wordpress.nikant20.milkdiary.View.LoginModule.LogoutActivity;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
@@ -117,7 +98,8 @@ public class MainActivity extends AppCompatActivity {
                 adapterKey = dataSnapshot.getKey();
                 Log.i("adapterKey",adapterKey);
                 adapterKeyList.add(adapterKey);
-                Collections.reverse(adapterKeyList);
+                Log.i("AdapterKeyList", String.valueOf(adapterKeyList));
+               // Collections.reverse(adapterKeyList);
             }
 
             @Override
@@ -173,6 +155,12 @@ public class MainActivity extends AppCompatActivity {
                       mDatabaseReference.child("MilkDiary").child("Diary").child(firebaseUser.getUid()).child(key).push().setValue(costModel);
                     }
 
+                    @Override
+                    public void onItemClick(View view) {
+                        Intent intent = new Intent(MainActivity.this,ShowTransaction.class);
+                        startActivity(intent);
+                    }
+
                 });
                 return userViewHolder;
             }
@@ -185,6 +173,7 @@ public class MainActivity extends AppCompatActivity {
         EditText editTextMilkInLitres;
         EditText editTextRate;
         TextView textViewDate;
+        TextView textViewName;
         TextView textViewSubmit;
         String date;
         Float milkInLitres;
@@ -197,6 +186,7 @@ public class MainActivity extends AppCompatActivity {
         //Interface to send callbacks...
         public interface ClickListener {
             public void onItemClick(View view, int position, Float milkinLitres, Float rate, String date, EditText editTextMilkInLitres, EditText editTextRate, TextView textViewDate);
+            public void onItemClick(View view);
         }
 
         public void setOnClickListener(UserViewHolder.ClickListener clickListener) {
@@ -209,10 +199,17 @@ public class MainActivity extends AppCompatActivity {
             editTextRate = itemView.findViewById(R.id.editTextRate);
             textViewDate = itemView.findViewById(R.id.textViewDate);
             textViewSubmit = itemView.findViewById(R.id.textViewSubmit);
+            textViewName = itemView.findViewById(R.id.textViewName);
 
             textViewDate.setText(DateFormat.getDateInstance().format(Calendar.getInstance().getTime()));
 
 
+            textViewName.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mClickListener.onItemClick(v);
+                }
+            });
             textViewSubmit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
