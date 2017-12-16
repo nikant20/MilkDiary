@@ -10,13 +10,15 @@ public class CostModel {
     Float milkInLitres;
     Float rate;
     String date;
+    Float total;
 
     public CostModel(){}
 
-    public CostModel(Float milkInLitres, Float rate, String date) {
+    public CostModel(Float milkInLitres, Float rate, String date, Float total) {
         this.milkInLitres = milkInLitres;
         this.rate = rate;
         this.date = date;
+        this.total = total;
     }
 
     public Float getMilkInLitres() {
@@ -43,12 +45,21 @@ public class CostModel {
         this.date = date;
     }
 
+    public Float getTotal() {
+        return total;
+    }
+
+    public void setTotal(Float total) {
+        this.total = total;
+    }
+
     @Override
     public String toString() {
         return "CostModel{" +
                 "milkInLitres=" + milkInLitres +
                 ", rate=" + rate +
-                ", date=" + date +
+                ", date='" + date + '\'' +
+                ", total=" + total +
                 '}';
     }
 }

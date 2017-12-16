@@ -3,6 +3,7 @@ package com.wordpress.nikant20.milkdiary.View.UiModule;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -38,7 +39,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class MainActivity extends AppCompatActivity {
-
     FloatingActionButton floatingActionButton;
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
@@ -55,7 +55,9 @@ public class MainActivity extends AppCompatActivity {
     FirebaseUser firebaseUser;
     int currentPosition;
     String adapterKey;
+    Float total;
     List<String> adapterKeyList;
+    Bundle bundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,10 +98,7 @@ public class MainActivity extends AppCompatActivity {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
                 adapterKey = dataSnapshot.getKey();
-                Log.i("adapterKey",adapterKey);
                 adapterKeyList.add(adapterKey);
-                Log.i("AdapterKeyList", String.valueOf(adapterKeyList));
-               // Collections.reverse(adapterKeyList);
             }
 
             @Override
@@ -145,19 +144,24 @@ public class MainActivity extends AppCompatActivity {
                         milkinLitres = Float.valueOf(editTextMilkInLitres.getText().toString());
                         rate = Float.valueOf(editTextRate.getText().toString());
                         date = textViewDate.getText().toString();
+                        total = milkinLitres*rate;
                         currentPosition = position;
-                        Log.i("position", String.valueOf(currentPosition));
-                        costModel = new CostModel(milkinLitres, rate, date);
+                        costModel = new CostModel(milkinLitres, rate, date,total);
                         costModelList.add(costModel);
 
                         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
                         String key = adapterKeyList.get(currentPosition);
-                      mDatabaseReference.child("MilkDiary").child("Diary").child(firebaseUser.getUid()).child(key).push().setValue(costModel);
+                        mDatabaseReference.child("MilkDiary").child("Diary").child(firebaseUser.getUid()).child(key).push().setValue(costModel);
+
+
                     }
 
                     @Override
-                    public void onItemClick(View view) {
+                    public void onItemClick(View view,int position) {
+                        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                        String key = adapterKeyList.get(position);
                         Intent intent = new Intent(MainActivity.this,ShowTransaction.class);
+                        intent.putExtra("key",key);
                         startActivity(intent);
                     }
 
@@ -186,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
         //Interface to send callbacks...
         public interface ClickListener {
             public void onItemClick(View view, int position, Float milkinLitres, Float rate, String date, EditText editTextMilkInLitres, EditText editTextRate, TextView textViewDate);
-            public void onItemClick(View view);
+            public void onItemClick(View view, int position);
         }
 
         public void setOnClickListener(UserViewHolder.ClickListener clickListener) {
@@ -207,7 +211,7 @@ public class MainActivity extends AppCompatActivity {
             textViewName.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mClickListener.onItemClick(v);
+                    mClickListener.onItemClick(v,getAdapterPosition());
                 }
             });
             textViewSubmit.setOnClickListener(new View.OnClickListener() {
