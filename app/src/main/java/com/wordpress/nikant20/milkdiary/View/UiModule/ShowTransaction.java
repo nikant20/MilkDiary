@@ -48,6 +48,7 @@ public class ShowTransaction extends AppCompatActivity{
     List<String> milkMankeyList,milkManEndUserChildKeyList;
     String key;
     Bundle bundle;
+    CostModel costModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,6 +71,7 @@ public class ShowTransaction extends AppCompatActivity{
            recyclerView.setHasFixedSize(true);
            layoutManager = new LinearLayoutManager(this);
            recyclerView.setLayoutManager(layoutManager);
+
           //FirebaseRefrences initalizations
 
            databaseReference = FirebaseDatabase.getInstance().getReference().child("MilkDiary");
@@ -81,7 +83,7 @@ public class ShowTransaction extends AppCompatActivity{
                    diaryMilkManKey = dataSnapshot.getKey();
                    Log.i("diaryMilkMankey","Key is: "+diaryMilkManKey);
                    diaryMilkManKeyList.add(diaryMilkManKey);
-
+                   costModel = dataSnapshot.getValue(CostModel.class);
                }
 
                @Override
@@ -110,7 +112,7 @@ public class ShowTransaction extends AppCompatActivity{
     protected void onStart() {
         super.onStart();
 
-        FirebaseRecyclerAdapter<CostModel,CostModelViewHolder> recyclerAdapter = new FirebaseRecyclerAdapter<CostModel, CostModelViewHolder>(CostModel.class,R.layout.activity_add_transactions,CostModelViewHolder.class,diaryDatabaseReference) {
+        FirebaseRecyclerAdapter<CostModel,CostModelViewHolder> recyclerAdapter = new FirebaseRecyclerAdapter<CostModel, CostModelViewHolder>(CostModel.class,R.layout.activity_add_transactions,CostModelViewHolder.class,milkManDatabaseReference.child(key)) {
             @Override
             protected void populateViewHolder(CostModelViewHolder viewHolder, CostModel model, int position) {
                     viewHolder.setTextViewDate(model.getDate());
@@ -143,7 +145,7 @@ public class ShowTransaction extends AppCompatActivity{
         }
 
         public void setTextViewDate(String date) {
-            TextView setDate = mView.findViewById(R.id.textViewDate);
+            TextView setDate = mView.findViewById(R.id.textViewTransactionDate);
             setDate.setText(date);
         }
 

@@ -90,4 +90,11 @@ public class ForgotPasswordActivity extends Activity{
             }
         });
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(ForgotPasswordActivity.this,LoginActivity.class);
+        startActivity(intent);
+    }
 }

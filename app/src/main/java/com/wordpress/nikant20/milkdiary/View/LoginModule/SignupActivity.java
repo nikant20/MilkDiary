@@ -325,4 +325,10 @@ public class SignupActivity extends Activity {
 
         return valid;
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(SignupActivity.this,LoginActivity.class));
+    }
 }
