@@ -27,6 +27,7 @@
         <activity android:name=".View.UiModule.ShowTransaction"/>
         <activity android:name=".View.LoginModule.SignupActivity" />
         <activity android:name=".View.LoginModule.ForgotPasswordActivity" />
+        <activity android:name=".View.UiModule.TransactionHistory"/>
         <activity android:name=".View.UiModule.AddCustomerActivity"></activity>
 
     </application>

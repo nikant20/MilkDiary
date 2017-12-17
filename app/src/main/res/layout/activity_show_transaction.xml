@@ -74,10 +74,40 @@
                     android:id="@+id/recyclerViewTransactions"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
+
             </FrameLayout>
 
-        </RelativeLayout>
 
+        </RelativeLayout>
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:padding="5dp"-->
+            <!--android:orientation="horizontal"-->
+            <!--android:layout_gravity="center">-->
+            <!--<TextView-->
+                <!--android:id="@+id/tvGrandTotal"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="Grand Total =  "-->
+                <!--android:textSize="20dp"-->
+                <!--android:gravity="center"-->
+                <!--android:textColor="#000000"-->
+                <!--android:textStyle="bold"-->
+                <!--android:layout_marginLeft="50dp"-->
+                <!--/>-->
+            <!--<TextView-->
+                <!--android:id="@+id/textViewGrandTotal"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginLeft="20dp"-->
+                <!--android:text="500000000000.00"-->
+                <!--android:textColor="#f71616"-->
+                <!--android:padding="4dp"-->
+                <!--/>-->
+
+
+        <!--</LinearLayout>-->
     </LinearLayout>
 
 </android.support.v7.widget.CardView>

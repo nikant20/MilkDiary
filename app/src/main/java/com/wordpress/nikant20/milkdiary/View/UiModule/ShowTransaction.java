@@ -1,19 +1,17 @@
 package com.wordpress.nikant20.milkdiary.View.UiModule;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,8 +21,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ThrowOnExtraProperties;
-import com.google.firebase.database.ValueEventListener;
 import com.wordpress.nikant20.milkdiary.Model.CostModel;
 import com.wordpress.nikant20.milkdiary.R;
 
@@ -47,17 +43,21 @@ public class ShowTransaction extends AppCompatActivity{
     MainActivity mainActivity;
     List<String> milkMankeyList,milkManEndUserChildKeyList;
     String key;
-    Bundle bundle;
+//    TextView textViewGrandTotal;
     CostModel costModel;
+    List<Float> total;
+    Float sum = Float.valueOf(0);
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_transaction);
 
+           total = new ArrayList<>();
+//           textViewGrandTotal = findViewById(R.id.textViewGrandTotal);
 
+           //getting key of clicked user on card adapter
            key =  getIntent().getStringExtra("key");
-           Log.i("current", "key is: "+key);
            diaryMilkManKeyList = new ArrayList<>();
            milkMankeyList = new ArrayList<>();
            milkManEndUserChildKeyList = new ArrayList<>();
@@ -119,9 +119,17 @@ public class ShowTransaction extends AppCompatActivity{
                     viewHolder.setMilkQuantity(String.valueOf(model.getMilkInLitres()));
                     viewHolder.setMilkRate(String.valueOf(model.getRate()));
                     viewHolder.setTotal(String.valueOf(model.getTotal()));
+                    total.add(model.getTotal());
+                    Log.i("total", String.valueOf(total));
+                for (int i=0;i<total.size();i++) {
+                    sum = sum + total.get(i);
+                }
+                Log.i("total money", String.valueOf(sum));
             }
         };
        recyclerView.setAdapter(recyclerAdapter);
+//       textViewGrandTotal.setText(String.valueOf(sum));
+
     }
 
     public static class CostModelViewHolder extends RecyclerView.ViewHolder {
@@ -164,5 +172,26 @@ public class ShowTransaction extends AppCompatActivity{
             setTotal.setText(total);
         }
 
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_transactions, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_Transaction_History) {
+            startActivity(new Intent(getApplicationContext(), TransactionHistory.class));
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
