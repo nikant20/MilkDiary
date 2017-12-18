@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,6 +22,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -52,6 +54,7 @@ public class AddCustomerActivity extends Activity {
     FirebaseStorage firebaseStorage;
     StorageReference storageReference;
     User user;
+    FirebaseUser firebaseUser;
 
     private static final int GALLERY_INTENT = 2;
 
@@ -61,7 +64,9 @@ public class AddCustomerActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_customer);
 
+
         firebaseAuth = FirebaseAuth.getInstance();
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         databaseReference = FirebaseDatabase.getInstance().getReference();
         firebaseStorage = FirebaseStorage.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference();
@@ -172,7 +177,7 @@ public class AddCustomerActivity extends Activity {
         String image = String.valueOf((downloadUrl));
 
         user = new User(name, email, address, mobile,image);
-        databaseReference.child("MilkDiary").child("EndUsers").push().setValue(user);
+        databaseReference.child("MilkDiary").child("EndUsers").child(String.valueOf(firebaseUser.getUid())).push().setValue(user);
         progressDialog.dismiss();
         Intent intent = new Intent(AddCustomerActivity.this,MainActivity.class);
         startActivity(intent);

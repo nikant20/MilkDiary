@@ -57,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
     String adapterKey;
     Float total;
     List<String> adapterKeyList;
-    Bundle bundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
         costModel = new CostModel();
         costModelList = new ArrayList<>();
         adapterKeyList = new ArrayList<>();
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
         editTextMilkInLitres = findViewById(R.id.editTextMilkInLitres);
         editTextRate = findViewById(R.id.editTextRate);
@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
 
         firebaseDatabase = FirebaseDatabase.getInstance();
         mDatabaseReference = firebaseDatabase.getReference();
-        databaseReference = firebaseDatabase.getReference().child("MilkDiary").child("EndUsers");
+        databaseReference = firebaseDatabase.getReference().child("MilkDiary").child("EndUsers").child(firebaseUser.getUid());
         progressDialog = new ProgressDialog(MainActivity.this, R.style.AppTheme_Dark_Dialog);
 
         recyclerView.setHasFixedSize(true);
@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
                         costModel = new CostModel(milkinLitres, rate, date,total);
                         costModelList.add(costModel);
 
-                        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
                         String key = adapterKeyList.get(currentPosition);
                         mDatabaseReference.child("MilkDiary").child("Diary").child(firebaseUser.getUid()).child(key).push().setValue(costModel);
 

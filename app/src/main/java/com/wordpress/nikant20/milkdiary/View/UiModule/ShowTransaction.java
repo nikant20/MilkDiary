@@ -1,9 +1,12 @@
 package com.wordpress.nikant20.milkdiary.View.UiModule;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,6 +24,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.wordpress.nikant20.milkdiary.Model.CostModel;
 import com.wordpress.nikant20.milkdiary.R;
 
@@ -42,11 +47,13 @@ public class ShowTransaction extends AppCompatActivity{
     List<String> diaryMilkManKeyList;
     MainActivity mainActivity;
     List<String> milkMankeyList,milkManEndUserChildKeyList;
-    String key;
-//    TextView textViewGrandTotal;
+    String key,childKey;
+    TextView textViewGrandTotal;
     CostModel costModel;
     List<Float> total;
+    FloatingActionButton fabDeleteTransaction;
     Float sum = Float.valueOf(0);
+    AlertDialog.Builder builder;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,7 +61,46 @@ public class ShowTransaction extends AppCompatActivity{
         setContentView(R.layout.activity_show_transaction);
 
            total = new ArrayList<>();
-//           textViewGrandTotal = findViewById(R.id.textViewGrandTotal);
+           textViewGrandTotal = findViewById(R.id.textViewGrandTotal);
+           fabDeleteTransaction = findViewById(R.id.fabDeleteTransaction);
+           fabDeleteTransaction.setOnClickListener(new View.OnClickListener() {
+               @Override
+               public void onClick(View v) {
+                   builder = new AlertDialog.Builder(ShowTransaction.this);
+                   builder.setTitle("Delete transaction History?").setMessage("Do you want to delete Transaction History?")
+                           .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                               @Override
+                               public void onClick(DialogInterface dialog, int which) {
+                                   DatabaseReference deleteQuery = milkManDatabaseReference.child(key);
+                                   deleteQuery.setValue(null);
+                                   textViewGrandTotal.setText("00.0");
+
+//                                   deleteQuery.addValueEventListener(new ValueEventListener() {
+//                                       @Override
+//                                       public void onDataChange(DataSnapshot dataSnapshot) {
+//                                          childKey = dataSnapshot.getKey();
+//
+//
+////                                           for (DataSnapshot appleSnapshot : dataSnapshot.getChildren()) {
+////                                               appleSnapshot.getRef().removeValue();
+////                                           }
+//                                       }
+//                                       @Override
+//                                       public void onCancelled(DatabaseError databaseError) {
+//
+//                                       }
+//                                   });
+
+
+                               }
+                           }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                       @Override
+                       public void onClick(DialogInterface dialog, int which) {
+
+                       }
+                   }).setIcon(R.drawable.trash).show();
+               }
+           });
 
            //getting key of clicked user on card adapter
            key =  getIntent().getStringExtra("key");
@@ -120,16 +166,15 @@ public class ShowTransaction extends AppCompatActivity{
                     viewHolder.setMilkRate(String.valueOf(model.getRate()));
                     viewHolder.setTotal(String.valueOf(model.getTotal()));
                     total.add(model.getTotal());
-                    Log.i("total", String.valueOf(total));
                 for (int i=0;i<total.size();i++) {
                     sum = sum + total.get(i);
                 }
-                Log.i("total money", String.valueOf(sum));
+                Log.i("Sum: ", String.valueOf(sum));
+                total.clear();
+                textViewGrandTotal.setText(sum.toString());
             }
         };
        recyclerView.setAdapter(recyclerAdapter);
-//       textViewGrandTotal.setText(String.valueOf(sum));
-
     }
 
     public static class CostModelViewHolder extends RecyclerView.ViewHolder {
@@ -173,25 +218,5 @@ public class ShowTransaction extends AppCompatActivity{
         }
 
     }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_transactions, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_Transaction_History) {
-            startActivity(new Intent(getApplicationContext(), TransactionHistory.class));
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 }
