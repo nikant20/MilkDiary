@@ -16,6 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -152,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
 
                         String key = adapterKeyList.get(currentPosition);
                         mDatabaseReference.child("MilkDiary").child("Diary").child(firebaseUser.getUid()).child(key).push().setValue(costModel);
-
+                        Toast.makeText(getApplicationContext(),"Successfully Submitted",Toast.LENGTH_SHORT).show();
 
                     }
 
@@ -276,6 +278,9 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_Logout) {
             logoutActivity.user_logout();
             startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+        }
+        else if (id == R.id.action_Delete_User){
+            startActivity(new Intent(getApplicationContext(),DeleteUserActivity.class));
         }
 
         return super.onOptionsItemSelected(item);

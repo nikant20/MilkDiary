@@ -74,29 +74,11 @@ public class ShowTransaction extends AppCompatActivity{
                                    DatabaseReference deleteQuery = milkManDatabaseReference.child(key);
                                    deleteQuery.setValue(null);
                                    textViewGrandTotal.setText("00.0");
-
-//                                   deleteQuery.addValueEventListener(new ValueEventListener() {
-//                                       @Override
-//                                       public void onDataChange(DataSnapshot dataSnapshot) {
-//                                          childKey = dataSnapshot.getKey();
-//
-//
-////                                           for (DataSnapshot appleSnapshot : dataSnapshot.getChildren()) {
-////                                               appleSnapshot.getRef().removeValue();
-////                                           }
-//                                       }
-//                                       @Override
-//                                       public void onCancelled(DatabaseError databaseError) {
-//
-//                                       }
-//                                   });
-
-
                                }
                            }).setNegativeButton("No", new DialogInterface.OnClickListener() {
                        @Override
                        public void onClick(DialogInterface dialog, int which) {
-
+                          dialog.cancel();
                        }
                    }).setIcon(R.drawable.trash).show();
                }
