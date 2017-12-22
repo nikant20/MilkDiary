@@ -65,6 +65,7 @@ public class AddCustomerActivity extends Activity {
         setContentView(R.layout.activity_add_customer);
 
 
+
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         databaseReference = FirebaseDatabase.getInstance().getReference();
@@ -78,6 +79,7 @@ public class AddCustomerActivity extends Activity {
         inputMobile = findViewById(R.id.inputMobile);
         inputAddress = findViewById(R.id.inputAddress);
         btnCreateAccount = findViewById(R.id.btnCreateAccount);
+       // btnCreateAccount.setEnabled(false);
         btnCreateAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -141,12 +143,14 @@ public class AddCustomerActivity extends Activity {
 
 
             StorageReference filepath = storageReference.child("Photos").child(uri.getLastPathSegment());
+            Log.i("FilePath", String.valueOf(filepath));
 
 
             filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     downloadUrl = taskSnapshot.getDownloadUrl();
+                    Log.i("downloadUrl", String.valueOf(downloadUrl));
                     btnCreateAccount.setEnabled(true);
 
                 }
@@ -175,6 +179,7 @@ public class AddCustomerActivity extends Activity {
         String email = inputEmail.getText().toString();
         final String mobile = inputMobile.getText().toString();
         String image = String.valueOf((downloadUrl));
+        Log.i("image",image);
 
         user = new User(name, email, address, mobile,image);
         databaseReference.child("MilkDiary").child("EndUsers").child(String.valueOf(firebaseUser.getUid())).push().setValue(user);

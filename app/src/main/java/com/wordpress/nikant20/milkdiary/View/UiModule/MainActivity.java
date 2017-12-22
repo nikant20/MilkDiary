@@ -1,7 +1,9 @@
 package com.wordpress.nikant20.milkdiary.View.UiModule;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.design.widget.FloatingActionButton;
@@ -45,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
     FirebaseDatabase firebaseDatabase;
-    DatabaseReference databaseReference, mDatabaseReference;
+    DatabaseReference databaseReference, mDatabaseReference,endUserDatabaseReference,milkManDatabaseReference,rootdatabaseReference;
     ProgressDialog progressDialog;
     LogoutActivity logoutActivity;
     User user;
@@ -59,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
     String adapterKey;
     Float total;
     List<String> adapterKeyList;
+    AlertDialog.Builder builder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,9 +89,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
+        rootdatabaseReference = FirebaseDatabase.getInstance().getReference().child("MilkDiary");
         firebaseDatabase = FirebaseDatabase.getInstance();
         mDatabaseReference = firebaseDatabase.getReference();
+        endUserDatabaseReference = mDatabaseReference.child("MilkDiary").child("EndUsers");
+        milkManDatabaseReference = endUserDatabaseReference.child(firebaseUser.getUid());
         databaseReference = firebaseDatabase.getReference().child("MilkDiary").child("EndUsers").child(firebaseUser.getUid());
         progressDialog = new ProgressDialog(MainActivity.this, R.style.AppTheme_Dark_Dialog);
 
@@ -159,13 +164,36 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onItemClick(View view,int position) {
-                        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-                        String key = adapterKeyList.get(position);
-                        Intent intent = new Intent(MainActivity.this,ShowTransaction.class);
-                        intent.putExtra("key",key);
-                        startActivity(intent);
+                    public void onItemClick(View view, final int position) {
+                        int viewid = view.getId();
+                        if (viewid == R.id.textViewName){
+                            firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                            String key = adapterKeyList.get(position);
+                            Intent intent = new Intent(MainActivity.this,ShowTransaction.class);
+                            intent.putExtra("key",key);
+                            startActivity(intent);
+                        }
+                        else if (viewid==R.id.textViewDelete){
+                            builder = new AlertDialog.Builder(MainActivity.this);
+                            builder.setTitle("Delete User?").setMessage("Do you want to delete the USER?")
+                                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            DatabaseReference deleteQuery = milkManDatabaseReference.child(adapterKeyList.get(position));
+                                            deleteQuery.setValue(null);
+                                            notifyDataSetChanged();
+                                        }
+                                    }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            }).setIcon(R.drawable.trash).show();
+                        }
+
+
                     }
+
 
                 });
                 return userViewHolder;
@@ -181,6 +209,7 @@ public class MainActivity extends AppCompatActivity {
         TextView textViewDate;
         TextView textViewName;
         TextView textViewSubmit;
+        TextView textViewDelete;
         String date;
         Float milkInLitres;
         Float rate;
@@ -205,6 +234,7 @@ public class MainActivity extends AppCompatActivity {
             editTextRate = itemView.findViewById(R.id.editTextRate);
             textViewDate = itemView.findViewById(R.id.textViewDate);
             textViewSubmit = itemView.findViewById(R.id.textViewSubmit);
+            textViewDelete = itemView.findViewById(R.id.textViewDelete);
             textViewName = itemView.findViewById(R.id.textViewName);
 
             textViewDate.setText(DateFormat.getDateInstance().format(Calendar.getInstance().getTime()));
@@ -213,6 +243,7 @@ public class MainActivity extends AppCompatActivity {
             textViewName.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
                     mClickListener.onItemClick(v,getAdapterPosition());
                 }
             });
@@ -220,6 +251,12 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     mClickListener.onItemClick(v, getAdapterPosition(), milkInLitres, rate, date, editTextMilkInLitres, editTextRate, textViewDate);
+                }
+            });
+            textViewDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mClickListener.onItemClick(v,getAdapterPosition());
                 }
             });
 
@@ -278,9 +315,6 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_Logout) {
             logoutActivity.user_logout();
             startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-        }
-        else if (id == R.id.action_Delete_User){
-            startActivity(new Intent(getApplicationContext(),DeleteUserActivity.class));
         }
 
         return super.onOptionsItemSelected(item);
